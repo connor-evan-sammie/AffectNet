@@ -89,8 +89,8 @@ class TensorflowDetector(object):
         (boxes, scores, classes, num_detections) = self.sess_1.run(
             [boxes, scores, classes, num_detections],
             feed_dict={image_tensor: image_np_expanded})
-        print('Detection time: {}'.format(round(time.time() - start_time, 8)))
-        print('--------------------------------------')
+        #print('Detection time: {}'.format(round(time.time() - start_time, 8)))
+        #print('--------------------------------------')
 
         classification_input = self.classification_graph.get_tensor_by_name('input_1:0')
         classification_output = self.classification_graph.get_tensor_by_name('dense_2/Softmax:0')
@@ -113,25 +113,29 @@ class TensorflowDetector(object):
                 images_for_prediction.append(image_pred)
 
         emotions_detected = []
+        valences = []
+        arousals = []
         if len(images_for_prediction) > 0:
             start_time = time.time()
             prediction = self.sess_2.run(classification_output,
                                          feed_dict={classification_input: images_for_prediction})
-            print('Classification time: {}'.format(round(time.time() - start_time, 8)))
+            #print('Classification time: {}'.format(round(time.time() - start_time, 8)))
             # prints classification class and confidence score for each detected face
             for row in prediction:
                 pred = np.argmax(row)
-                print(emotion_classes[pred] + ' ' + str(round(row[pred], 2)))
+                #print(emotion_classes[pred] + ' ' + str(round(row[pred], 2)))
                 emotions_detected.append(emotion_classes[pred])
-            print('--------------------------------------')
+            #print('--------------------------------------')
             start_time = time.time()
             prediction = self.sess_3.run(regression_output,
                                          feed_dict={regression_input: images_for_prediction})
-            print('Regression time: {}'.format(round(time.time() - start_time, 8)))
+            #print('Regression time: {}'.format(round(time.time() - start_time, 8)))
             # prints valence and arousal score for each detected face
             for row in prediction:
-                print('Valence: ' + str(round(row[0], 5)) + ' Arousal: ' + str(round(row[1], 5)))
+                valences.append(row[0])
+                arousals.append(row[1])
+                #print('Valence: ' + str(round(row[0], 5)) + ' Arousal: ' + str(round(row[1], 5)))
 
-            print('\n')
+            #print('\n')
 
-        return boxes, scores, classes, num_detections, emotions_detected
+        return valences, arousals, emotions_detected
