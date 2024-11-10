@@ -70,7 +70,7 @@ class TensorflowDetector(object):
         """
 
         [h, w] = image.shape[:2]
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # the array based representation of the image will be used later in order to prepare the
         # result image with boxes and labels on it.
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
